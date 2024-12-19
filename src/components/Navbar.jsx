@@ -23,6 +23,12 @@ const Navbar = () => {
           <li>
             <Link to="/add-job">Add Job</Link>
           </li>
+          <li>
+            <Link to="/add-job">Add Job</Link>
+          </li>
+          <li>
+            <Link to="/my-posted-jobs">My posted job</Link>
+          </li>
           {!user && (
             <li>
               <Link to="/login">Login</Link>
