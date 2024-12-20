@@ -2,8 +2,8 @@ import axios from "axios";
 import { format } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "./../providers/AuthProvider";
 import Swal from "sweetalert2";
+import { AuthContext } from "./../providers/AuthProvider";
 const MyPostedJobs = () => {
   const { user } = useContext(AuthContext);
   const [jobs, setJobs] = useState([]);
@@ -26,7 +26,7 @@ const MyPostedJobs = () => {
       console.log(err);
     }
   };
- 
+
   const confirmDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -137,7 +137,6 @@ const MyPostedJobs = () => {
                         <div className="flex items-center gap-x-6">
                           <button
                             onClick={() => confirmDelete(job._id)}
-
                             className="text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none"
                           >
                             <svg
@@ -157,7 +156,7 @@ const MyPostedJobs = () => {
                           </button>
 
                           <Link
-                            to={`/update/1`}
+                            to={`/update/${job._id}`}
                             // onClick={upadte}
                             className="text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none"
                           >
