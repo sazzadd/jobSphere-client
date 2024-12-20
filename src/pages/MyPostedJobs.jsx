@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "./../providers/AuthProvider";
+import Swal from "sweetalert2";
 const MyPostedJobs = () => {
   const { user } = useContext(AuthContext);
   const [jobs, setJobs] = useState([]);
@@ -15,15 +16,37 @@ const MyPostedJobs = () => {
     );
     setJobs(data);
   };
-  const handleDeelete =async (id) => {
-    try{
-      const{data} = await axios.delete(`http://localhost:5000/job/${id}`)
-      console.log(data)
-    }catch(err){
-      console.log(err)
+
+  const handleDeelete = async (id) => {
+    try {
+      const { data } = await axios.delete(`http://localhost:5000/job/${id}`);
+      console.log(data);
+      setJobs((prevJobs) => prevJobs.filter((job) => job._id !== id));
+    } catch (err) {
+      console.log(err);
     }
   };
-
+ 
+  const confirmDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDeelete(id);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+      }
+    });
+  };
   return (
     <section className="container px-4 mx-auto pt-12">
       <div className="flex items-center gap-x-3">
@@ -113,7 +136,8 @@ const MyPostedJobs = () => {
                       <td className="px-4 py-4 text-sm whitespace-nowrap">
                         <div className="flex items-center gap-x-6">
                           <button
-                            onClick={() => handleDeelete(job._id)}
+                            onClick={() => confirmDelete(job._id)}
+
                             className="text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none"
                           >
                             <svg
@@ -134,6 +158,7 @@ const MyPostedJobs = () => {
 
                           <Link
                             to={`/update/1`}
+                            // onClick={upadte}
                             className="text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none"
                           >
                             <svg
