@@ -2,7 +2,9 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import { AuthContext } from "../providers/AuthProvider";
 
 const UpdateJob = () => {
@@ -10,6 +12,7 @@ const UpdateJob = () => {
   const { id } = useParams();
   const [startDate, setStartDate] = useState(new Date());
   const [job, setJob] = useState({});
+  const navigate = useNavigate();
   useEffect(() => {
     fetchJobData();
   }, [id]);
@@ -17,6 +20,46 @@ const UpdateJob = () => {
     const { data } = await axios.get(`http://localhost:5000/job/${id}`);
     setJob(data);
     setStartDate(new Date(data.deadline));
+  };
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const title = form.job_title.value;
+    const email = form.email.value;
+    const deadline = startDate;
+    const category = form.category.value;
+    const min_price = parseFloat(form.min_price.value);
+    const max_price = parseFloat(form.max_price.value);
+    const description = form.description.value;
+
+    const formData = {
+      title,
+      buyer: {
+        email,
+        name: user?.displayName,
+        photo: user?.photoURL,
+      },
+      deadline,
+      category,
+      min_price,
+      max_price,
+      description,
+      bid_count: job.bid_count,
+    };
+
+    try {
+      await axios.put(`http://localhost:5000/update-job/${id}`, formData);
+      Swal.fire({
+        title: "success!",
+        text: "Applied successfully",
+        icon: "success",
+        confirmButtonText: "Cool",
+      });
+      navigate("/my-posted-jobs");
+    } catch (err) {
+      console.log(err);
+      toast.error("error");
+    }
   };
   console.log(job);
   return (
@@ -26,7 +69,7 @@ const UpdateJob = () => {
           Update a Job
         </h2>
 
-        <form>
+        <form onSubmit={handleUpdate}>
           <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
               <label className="text-gray-700 " htmlFor="job_title">
